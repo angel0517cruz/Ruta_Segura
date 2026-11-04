@@ -7,7 +7,7 @@ import { randomBytes } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { haversine, muestrearPolilinea } from '../../shared/geo.js';
 import { config } from '../config.js';
-import { hashear } from '../services/auth.js';
+import { hashear, verificar } from '../services/auth.js';
 import { db, iniciarDb } from './index.js';
 import { crearEsquema } from './schema.js';
 
@@ -142,11 +142,31 @@ export async function sembrarDemo() {
   return true;
 }
 
+/**
+ * Mantiene la clave de las dos cuentas iniciales igual a DEMO_PASSWORD. El hash solo se calcula al crear las cuentas,
+ * así que sin esto cambiar la variable en el servidor no tendría efecto. También levanta un bloqueo por intentos fallidos.
+ */
+export async function sincronizarClaveDemo() {
+  const clave = process.env.DEMO_PASSWORD;
+  if (!clave) return 0;
+  let actualizadas = 0;
+  for (const email of ['sofia@demo.co', 'moderadora@demo.co']) {
+    const u = await db.uno('SELECT id, password_hash FROM usuarias WHERE email = ?', [email]);
+    if (!u || (await verificar(clave, u.password_hash))) continue;
+    await db.ejecutar('UPDATE usuarias SET password_hash = ?, intentos_fallidos = 0, bloqueada_hasta = NULL WHERE id = ?', [await hashear(clave), u.id]);
+    actualizadas++;
+  }
+  return actualizadas;
+}
+
 export async function prepararBase({ demo = config.demo } = {}) {
   await iniciarDb();
   await crearEsquema();
   await sembrarMunicipios();
-  if (demo) await sembrarDemo();
+  if (demo) {
+    await sembrarDemo();
+    await sincronizarClaveDemo();
+  }
 }
 
 async function reiniciar() {
