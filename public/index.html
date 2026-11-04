@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Luma · Ruta Segura</title>
+  <meta name="description" content="Rutas nocturnas más seguras para mujeres en Cundinamarca: iluminación, cámaras, comercios abiertos y reportes de la comunidad.">
+  <meta name="theme-color" content="#0e0824">
+  <link rel="icon" type="image/svg+xml" href="/img/luna.svg">
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <a class="saltar" href="#" id="saltar">Saltar al contenido</a>
+
+  <div id="escena">
+    <div id="mapa" role="application" aria-label="Mapa de zonas de riesgo y rutas. Usa las flechas para moverte y más o menos para acercar. Hay una lista equivalente en la sección Reportes."></div>
+    <div id="velo-cielo" aria-hidden="true"></div>
+  </div>
+
+  <section id="panel" aria-label="Panel principal" hidden>
+    <button class="asa" id="asa" type="button" aria-expanded="true" aria-controls="contenido"><span class="solo-lectores">Mostrar u ocultar el panel</span></button>
+    <div id="contenido" tabindex="-1"></div>
+  </section>
+
+  <nav id="nav" aria-label="Principal" hidden></nav>
+
+  <div id="bienvenida" hidden></div>
+
+  <div id="avisos" role="status" aria-live="polite"></div>
+  <div id="anuncios" class="solo-lectores" role="alert" aria-live="assertive"></div>
+  <div class="borde-alerta" id="borde-alerta" aria-hidden="true"></div>
+
+  <noscript><p style="padding:24px;position:relative;z-index:9999">Luma necesita JavaScript para mostrar el mapa y calcular rutas.</p></noscript>
+  <script src="/vendor/leaflet/leaflet.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

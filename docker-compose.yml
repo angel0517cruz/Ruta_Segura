@@ -1,0 +1,29 @@
+# Entorno completo local con PostgreSQL: cp .env.example .env  →  docker compose up --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: luma
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-luma_local}
+      POSTGRES_DB: luma
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U luma"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build: .
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["3000:3000"]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://luma:${POSTGRES_PASSWORD:-luma_local}@db:5432/luma?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:?define JWT_SECRET en .env}
+      DATA_KEY: ${DATA_KEY:?define DATA_KEY en .env}
+      SEED_DEMO: "1"
+      APP_USER_AGENT: ${APP_USER_AGENT:-LumaRutaSegura/1.0}
+
+volumes:
+  pgdata:
