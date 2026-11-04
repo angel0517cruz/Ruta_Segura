@@ -49,7 +49,8 @@ export function seguridadEnPunto(p, ctx, hora, ahoraMs = Date.now()) {
   const com = acotar(comercios);
   const riesgo = intensidad(suma);
 
-  const base = 0.12 + (noche ? 0.34 : 0.12 + 0.22) * luz + 0.2 * cam + 0.3 * com + (verificada ? 0.06 : 0);
+  // De noche la iluminación pesa 0,34; de día solo 0,12 (y se compensa con una base mayor para no castigar de más).
+  const base = 0.12 + (noche ? 0 : 0.22) + (noche ? 0.34 : 0.12) * luz + 0.2 * cam + 0.3 * com + (verificada ? 0.06 : 0);
   const seguridad = acotar(base - 0.55 * riesgo - (danadas > 0 ? 0.12 : 0));
   return { seguridad, luz, cam, com, riesgo };
 }
