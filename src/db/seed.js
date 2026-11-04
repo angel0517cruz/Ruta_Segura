@@ -3,6 +3,7 @@
 //  - Demo: puntos de seguridad y reportes SIMULADOS para poder mostrar el sistema. No son datos reales
 //    y la interfaz lo advierte. En producción real se reemplazan por OSM + reportes de la comunidad.
 import { readFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { haversine, muestrearPolilinea } from '../../shared/geo.js';
 import { config } from '../config.js';
@@ -87,7 +88,10 @@ export async function sembrarDemo() {
   if (await db.uno('SELECT 1 AS x FROM usuarias LIMIT 1')) return false;
   const ahora = Date.now();
   const iso = (ms) => new Date(ms).toISOString();
-  const hash = await hashear('Luna2026!');
+  // En producción la clave de las cuentas iniciales es secreta (DEMO_PASSWORD); nunca la clave pública del README.
+  const clave = process.env.DEMO_PASSWORD || (config.produccion ? randomBytes(12).toString('base64url') : 'Luna2026!');
+  if (config.produccion && !process.env.DEMO_PASSWORD) console.log(`[seed] DEMO_PASSWORD no definida: clave generada para sofia@demo.co y moderadora@demo.co → ${clave}`);
+  const hash = await hashear(clave);
   const municipios = await db.todos('SELECT id, nombre, lat, lng FROM municipios ORDER BY id');
   const zip = municipios.find((m) => m.nombre === 'Zipaquirá');
 

@@ -38,7 +38,7 @@ npm start                # http://localhost:3000
 npm test                 # 40 pruebas
 ```
 
-Cuentas iniciales (clave `Luna2026!`): `sofia@demo.co` (usuaria) y `moderadora@demo.co` (moderadora). Solo existen cuando `SEED_DEMO=1` o fuera de producción; cámbialas antes de publicar.
+Cuentas iniciales (clave `Luna2026!`): `sofia@demo.co` (usuaria) y `moderadora@demo.co` (moderadora). Solo existen cuando `SEED_DEMO=1` o fuera de producción. En Render su clave es la variable secreta `DEMO_PASSWORD`. Para nombrar una moderadora real: `npm run moderadora -- correo@dominio.com`.
 
 Recorrido rápido: entra con `sofia@demo.co` → *Ruta* → «Probar con un trayecto de ejemplo» → *Buscar* → *Empezar caminata* → «Simular caminata» y «Simular desvío». Luego entra con la moderadora y abre *Moderar*.
 
