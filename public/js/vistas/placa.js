@@ -62,7 +62,7 @@ export async function abrirPlaca(viaje, previa) {
   });
 
   compartir.addEventListener('click', async () => {
-    const texto = `Voy en un taxi con placa ${entrada.value}. Salí de ${viaje.origen_texto ?? 'mi origen'} hacia ${viaje.destino_texto ?? 'mi destino'}. (Luma · Ruta Segura)`;
+    const texto = `Voy en un taxi con placa ${entrada.value}. Salí de ${viaje.origen_texto ?? 'mi origen'} hacia ${viaje.destino_texto ?? 'mi destino'}. (Nova · Ruta Segura)`;
     if (navigator.share) { try { await navigator.share({ text: texto }); } catch { /* cancelado */ } return; }
     window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank', 'noopener');
   });

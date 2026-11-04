@@ -1,7 +1,7 @@
 {
   "name": "ruta-segura",
   "version": "1.0.0",
-  "description": "Luma · Ruta Segura: navegación nocturna colaborativa para mujeres en Cundinamarca",
+  "description": "Nova · Ruta Segura: navegación nocturna colaborativa para mujeres en Cundinamarca",
   "type": "module",
   "private": true,
   "engines": {

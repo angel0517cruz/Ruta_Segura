@@ -3,12 +3,12 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: luma
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-luma_local}
-      POSTGRES_DB: luma
+      POSTGRES_USER: nova
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nova_local}
+      POSTGRES_DB: nova
     volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U luma"]
+      test: ["CMD-SHELL", "pg_isready -U nova"]
       interval: 5s
       retries: 10
 
@@ -19,11 +19,11 @@ services:
     ports: ["3000:3000"]
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://luma:${POSTGRES_PASSWORD:-luma_local}@db:5432/luma?sslmode=disable
+      DATABASE_URL: postgres://nova:${POSTGRES_PASSWORD:-nova_local}@db:5432/nova?sslmode=disable
       JWT_SECRET: ${JWT_SECRET:?define JWT_SECRET en .env}
       DATA_KEY: ${DATA_KEY:?define DATA_KEY en .env}
       SEED_DEMO: "1"
-      APP_USER_AGENT: ${APP_USER_AGENT:-LumaRutaSegura/1.0}
+      APP_USER_AGENT: ${APP_USER_AGENT:-NovaRutaSegura/1.0}
 
 volumes:
   pgdata:

@@ -58,7 +58,15 @@ export function crearRutas() {
 
   const mod = [requiereRol('MODERADORA')];
   api.get('/moderacion/cola', ...mod, moderacion.cola);
-  api.post('/moderacion/:id/resolver', ...mod, moderacion.resolver);
+  api.get('/moderacion/reportes', ...mod, moderacion.reportes);
+  api.post('/moderacion/reportes/:id/resolver', ...mod, moderacion.resolver);
+  api.post('/moderacion/reportes/:id/limitar-autora', ...mod, moderacion.limitarAutora);
+  api.get('/moderacion/puntos', ...mod, moderacion.puntos);
+  api.post('/moderacion/puntos', ...mod, moderacion.crearPunto);
+  api.post('/moderacion/puntos/:id/estado', ...mod, moderacion.estadoPunto);
+  api.get('/moderacion/luminarias-danadas', ...mod, moderacion.luminariasDanadas);
+  api.post('/moderacion/luminarias-danadas/:id/reparar', ...mod, moderacion.repararLuminaria);
+  api.get('/moderacion/metricas', ...mod, moderacion.metricas);
   api.get('/moderacion/auditoria', ...mod, moderacion.auditoria);
 
   return api;

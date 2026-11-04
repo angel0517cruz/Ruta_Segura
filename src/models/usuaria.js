@@ -23,6 +23,11 @@ export const Usuaria = {
     await db.ejecutar('UPDATE usuarias SET intentos_fallidos = ?, bloqueada_hasta = ? WHERE id = ?', [bloqueo ? 0 : intentos, bloqueo, u.id]);
   },
   limpiarFallos: (id) => db.ejecutar('UPDATE usuarias SET intentos_fallidos = 0, bloqueada_hasta = NULL WHERE id = ?', [id]),
+  limitarPublicacion: (id, hasta) => db.ejecutar('UPDATE usuarias SET limitada_hasta = ? WHERE id = ?', [hasta, id]),
+  async contarLimitadas() {
+    const f = await db.uno('SELECT COUNT(*) AS n FROM usuarias WHERE limitada_hasta > ?', [ahoraIso()]);
+    return Number(f.n);
+  },
   sumarPuntos: (id, puntos) => db.ejecutar('UPDATE usuarias SET puntos = puntos + ? WHERE id = ?', [puntos, id]),
 };
 

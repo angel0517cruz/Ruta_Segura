@@ -1,4 +1,4 @@
-"""Utilidades para armar documentos Word con la identidad lila de Luma."""
+"""Utilidades para armar documentos Word con la identidad lila de Nova."""
 from docx import Document
 from docx.enum.section import WD_ORIENT
 from docx.enum.table import WD_TABLE_ALIGNMENT
@@ -36,7 +36,7 @@ def nuevo_documento(titulo_corto):
         st.paragraph_format.keep_with_next = True
     pie = s.footer.paragraphs[0]
     pie.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = pie.add_run(f"Luma · Ruta Segura — {titulo_corto}   |   Página ")
+    r = pie.add_run(f"Nova · Ruta Segura — {titulo_corto}   |   Página ")
     r.font.size = Pt(8.5)
     r.font.color.rgb = SUAVE
     _campo(pie, "PAGE")
@@ -70,7 +70,7 @@ def sombrear(celda, hex_color):
 def portada(d, titulo, subtitulo, datos):
     p = d.add_paragraph()
     p.paragraph_format.space_before = Pt(110)
-    r = p.add_run("LUMA")
+    r = p.add_run("NOVA")
     r.font.size, r.font.bold, r.font.color.rgb = Pt(14), True, PRI
     p = d.add_paragraph()
     r = p.add_run(titulo)

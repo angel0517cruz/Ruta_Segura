@@ -13,7 +13,7 @@ export async function requiereSesion(req, res, next) {
   } catch {
     throw new ErrorApp(401, 'Tu sesión venció. Vuelve a ingresar.', 'SESION_INVALIDA');
   }
-  const usuaria = await db.uno('SELECT id, nombre, email, rol, municipio_id, puntos FROM usuarias WHERE id = ?', [Number(payload.sub)]);
+  const usuaria = await db.uno('SELECT id, nombre, email, rol, municipio_id, puntos, limitada_hasta FROM usuarias WHERE id = ?', [Number(payload.sub)]);
   if (!usuaria) throw new ErrorApp(401, 'Tu sesión venció. Vuelve a ingresar.', 'SESION_INVALIDA');
   req.usuaria = usuaria;
   next();

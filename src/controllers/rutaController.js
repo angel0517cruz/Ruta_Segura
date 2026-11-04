@@ -5,7 +5,7 @@ import { Reporte } from '../models/reporte.js';
 import { generarCandidatas } from '../services/candidatas.js';
 import { celdasDeCalor, riesgoDeCalles } from '../services/calor.js';
 import { contextoDesde, datosParaTrayecto } from '../services/contexto.js';
-import { callesOsm, geocodificar } from '../services/externos.js';
+import { callesOsm, geocodificar, ServicioNoDisponible } from '../services/externos.js';
 import { evaluarRuta, elegirRecomendada } from '../services/seguridadRuta.js';
 import { bboxSchema, rutaSchema } from '../services/validaciones.js';
 import { PuntoSeguridad, Verificacion } from '../models/comunidad.js';
@@ -21,13 +21,18 @@ export async function geocodificarReferencia(req, res) {
   const q = String(req.query.q ?? '').trim();
   const municipio = await Municipio.porId(Number(req.query.municipio_id));
   if (q.length < 3 || q.length > 120 || !municipio) throw new ErrorApp(400, 'Indica un lugar (mínimo 3 letras) y un municipio.', 'PARAMETROS');
-  res.json({ resultados: await geocodificar(q, municipio) });
+  try {
+    res.json({ disponible: true, resultados: await geocodificar(q, municipio) });
+  } catch (e) {
+    if (!(e instanceof ServicioNoDisponible)) throw e;
+    res.json({ disponible: false, resultados: [] }); // la interfaz explica que ahora no se puede verificar
+  }
 }
 
 export async function planificar(req, res) {
   const { origen, destino, hora = horaColombia() } = rutaSchema.parse(req.body);
   if (haversine(origen, destino) < 60) throw new ErrorApp(422, 'El origen y el destino están casi en el mismo lugar.', 'TRAYECTO_CORTO');
-  if (haversine(origen, destino) > MAX_CAMINATA_M) throw new ErrorApp(422, 'El trayecto supera los 8 km: Luma está pensada para caminatas.', 'TRAYECTO_LARGO');
+  if (haversine(origen, destino) > MAX_CAMINATA_M) throw new ErrorApp(422, 'El trayecto supera los 8 km: Nova está pensada para caminatas.', 'TRAYECTO_LARGO');
   const datos = await datosParaTrayecto(origen, destino, { usarOsm: config.apis.habilitadas });
   if (!datos.municipio) throw new ErrorApp(422, 'Por ahora cubrimos municipios de Cundinamarca de la lista.', 'FUERA_DE_COBERTURA');
 

@@ -1,4 +1,4 @@
-"""Diagramas UML de Luma · Ruta Segura (matplotlib, paleta lila). Genera PNG en docs/img/."""
+"""Diagramas UML de Nova · Ruta Segura (matplotlib, paleta lila). Genera PNG en docs/img/."""
 from pathlib import Path
 
 import matplotlib
@@ -56,25 +56,27 @@ def actor(ax, x, y, nombre, color=TINTA):
 
 # ───────────────────────────── 1. CASOS DE USO ─────────────────────────────
 def casos_de_uso():
-    fig, ax = lienzo(17, 13.2, "Diagrama de casos de uso · Luma Ruta Segura")
+    fig, ax = lienzo(17, 13.2, "Diagrama de casos de uso · Nova Ruta Segura")
     ax.add_patch(Rectangle((22, 3), 98, 122, fc="#faf8ff", ec=MEDIO, lw=1.2, ls="--"))
-    ax.text(71, 122, "Sistema Luma · Ruta Segura", ha="center", fontsize=10, fontweight="bold", color=PRI)
+    ax.text(71, 122, "Sistema Nova · Ruta Segura", ha="center", fontsize=10, fontweight="bold", color=PRI)
 
     casos = {
         "reg": (45, 112, "Registrarse e iniciar\nsesión (JWT)"),
-        "rep": (45, 97, "Reportar punto\nde riesgo"),
+        "rep": (45, 97, "Reportar punto de riesgo\n(lugar verificado)"),
         "lis": (45, 82, "Consultar reportes\n(cercanía y filtro)"),
         "cal": (45, 67, "Ver mapa de calor\npredictivo por hora"),
         "rut": (86, 105, "Planificar ruta segura"),
-        "geo": (108, 118, "Geocodificar\nreferencia"),
-        "alt": (86, 89, "Recibir alerta\nde desvío"),
+        "geo": (108, 118, "Geocodificar y verificar\nque el lugar existe"),
+        "alt": (86, 73, "Recibir alerta\nde desvío"),
         "cam": (86, 89, "Iniciar caminata"),
         "pla": (86, 57, "Registrar placa\nde taxi (temporal)"),
         "ver": (45, 50, "Verificar datos\n(ruta, luminaria, comercio)"),
         "con": (45, 35, "Confirmar o denunciar\nreporte"),
         "per": (45, 20, "Ver perfil e\ninsignias"),
-        "mod": (95, 33, "Moderar reportes\ndenunciados"),
-        "aud": (95, 17, "Consultar registro\nde auditoría"),
+        "mod": (96, 46, "Moderar reportes\n(ocultar, atender)"),
+        "lim": (96, 35, "Limitar publicación de\nuna autora (por alias)"),
+        "cur": (96, 24, "Curar datos de seguridad\n(luminarias, comercios)"),
+        "met": (96, 13, "Ver métricas y\nregistro de auditoría"),
     }
     for k, (x, y, t) in casos.items():
         ax.add_patch(Ellipse((x, y), 30, 9.2, fc=CLARO, ec=PRI, lw=1.3))
@@ -82,7 +84,7 @@ def casos_de_uso():
 
     actor(ax, 8, 62, "Usuaria\nautenticada")
     actor(ax, 8, 98, "Visitante")
-    actor(ax, 132, 40, "Moderadora\n(humana)")
+    actor(ax, 132, 28, "Moderadora\n(persona)")
     actor(ax, 132, 100, "Servicios OSM\n(Nominatim, Overpass,\nOSRM)", color=SUAVE)
 
     def une(a, b, pa=None, estilo="-", color=TINTA):
@@ -92,9 +94,9 @@ def casos_de_uso():
         x, y, _ = casos[k]
         une((12, 70), (x - 15, y))
     une((12, 106), (casos["reg"][0] - 15, casos["reg"][1]))
-    for k in ["mod", "aud"]:
+    for k in ["mod", "lim", "cur", "met"]:
         x, y, _ = casos[k]
-        une((128, 46), (x + 15, y))
+        une((128, 34), (x + 15, y))
     une((128, 108), (casos["geo"][0] + 15, casos["geo"][1]), color=SUAVE)
     une((128, 104), (casos["rut"][0] + 15, casos["rut"][1]), color=SUAVE)
 
@@ -160,21 +162,22 @@ def clases():
     fig, ax = lienzo(22, 15, "Diagrama de clases · dominio y servicios")
     X = [4, 58, 112, 166]
     W = 46
-    ver = clase(ax, X[0], 140, W, "Verificacion", ["id: int", "tipo: RUTA_OK|LUMINARIA_DANADA|\n  COMERCIO_ABIERTO|REPORTE_CONFIRMADO", "lat, lng: float", "puntos: int", "creadaEn: datetime"], ["registrar()"])
-    usu = clase(ax, X[1], 140, W, "Usuaria", ["id: int", "nombre: string", "email: string (único)", "passwordHash: string (bcrypt)", "rol: USUARIA|MODERADORA", "puntos: int", "intentosFallidos: int", "bloqueadaHasta: datetime"],
-                ["registrar()", "iniciarSesion(): JWT", "sumarPuntos(n)"])
+    ver = clase(ax, X[0], 140, W, "Verificacion", ["id: int", "tipo: RUTA_OK|LUMINARIA_DANADA|\n  COMERCIO_ABIERTO|REPORTE_CONFIRMADO", "lat, lng: float", "puntos: int", "resuelta: bool", "creadaEn: datetime"], ["registrar()", "marcarResuelta()"])
+    usu = clase(ax, X[1], 140, W, "Usuaria", ["id: int", "nombre: string", "email: string (único)", "passwordHash: string (bcrypt)", "rol: USUARIA|MODERADORA", "puntos: int", "intentosFallidos: int", "bloqueadaHasta: datetime", "limitadaHasta: datetime"],
+                ["registrar()", "iniciarSesion(): JWT", "sumarPuntos(n)", "limitarPublicacion(dias)"])
     mun = clase(ax, X[2], 140, W, "Municipio", ["id: int", "nombre: string", "lat, lng: float"])
-    pun = clase(ax, X[3], 140, W, "PuntoSeguridad", ["id: int", "tipo: LUMINARIA|CAMARA|COMERCIO", "lat, lng: float", "abre, cierra: int", "fuente: demo|osm"])
+    pun = clase(ax, X[3], 140, W, "PuntoSeguridad", ["id: int", "tipo: LUMINARIA|CAMARA|COMERCIO", "lat, lng: float", "abre, cierra: int", "fuente: osm|moderacion", "activo: bool"], ["crear()", "cambiarActivo()"])
 
     ins = clase(ax, X[0], 98, W, "InsigniaUsuaria", ["usuariaId: int", "codigo: string", "otorgadaEn: datetime"], ["otorgar()"])
     via = clase(ax, X[1], 98, W, "Viaje", ["id: int", "rutaJson: coords[]", "puntaje: int", "estado: EN_CURSO|FINALIZADO|\n  CANCELADO", "desvios: int", "iniciadoEn: datetime"], ["iniciar()", "finalizar()", "registrarDesvio()"])
-    rep = clase(ax, X[2], 108, W, "Reporte", ["id: int", "referencia: string", "categoria: ACOSO|ILUMINACION|\n  DESOLADO|LUMINARIA_DANADA", "descripcion: string(≤280)", "lat, lng: float", "precision: EXACTA|APROXIMADA", "hora: int (0-23)", "estado: ACTIVO|EN_REVISION|OCULTO", "confirmaciones, denuncias: int"],
+    rep = clase(ax, X[2], 108, W, "Reporte", ["id: int", "referencia: string", "categoria: ACOSO|ILUMINACION|\n  DESOLADO|LUMINARIA_DANADA", "descripcion: string(≤280)", "lat, lng: float", "precision: EXACTA|APROXIMADA", "hora: int (0-23)", "estado: ACTIVO|EN_REVISION|\n  OCULTO|RESUELTO", "confirmaciones, denuncias: int"],
                 ["crear()", "denunciar()", "cambiarEstado()"])
 
     mon = clase(ax, X[0], 66, W, "MonitorDesvio", ["umbralM = 45", "consecutivos = 3"], ["actualizar(pos): estado"], fc="#e1d6ff", estereotipo="«shared/geo.js · cliente»")
     pla = clase(ax, X[1], 62, W, "PlacaTemporal", ["viajeId: int (único)", "placaCifrada: AES-256-GCM", "fotoCifrada: AES-256-GCM", "expiraEn: datetime"], ["guardar()", "purgarVencidas()"])
     aud = clase(ax, X[2], 64, W, "Auditoria", ["id: int", "actorId: int", "accion: string", "detalle: string", "creadaEn: datetime"], ["registrar()"])
 
+    vub = clase(ax, X[3], 66, W, "VerificadorUbicacion", ["radioCoincidenciaM = 600"], ["verificarUbicacion(ref, punto)"], fc="#e1d6ff", estereotipo="«servicio»")
     plan = clase(ax, X[0], 30, W, "PlanificadorRutas", ["candidatas: Ruta[]"], ["generarCandidatas(o, d)", "atractores(o, d)", "elegirRecomendada()"], fc="#e1d6ff", estereotipo="«servicio»")
     eva = clase(ax, X[1], 30, W, "EvaluadorSeguridad", ["luz, cámaras, comercios, riesgo"], ["evaluarRuta(coords, hora): 0-100", "seguridadEnPunto(p, hora)"], fc="#e1d6ff", estereotipo="«servicio»")
     rie = clase(ax, X[2], 30, W, "ModeloRiesgo", ["sigmaHoras = 2.5", "vidaMediaDias = 120"], ["pesoReporte(r, hora)", "intensidad(suma)"], fc="#e1d6ff", estereotipo="«servicio»")
@@ -188,6 +191,7 @@ def clases():
     relacion(ax, mun, pun, "1", "0..*")
     relacion(ax, via, pla, "1", "0..1", "registra", agreg=True)
     relacion(ax, rep, aud, "", "", "decisión genera")
+    relacion(ax, rep, vub, "", "", "valida con", ls="--")
     relacion(ax, via, mon, "", "", "vigila", ls="--")
     relacion(ax, plan, eva, "", "", "usa", ls="--")
     relacion(ax, eva, rie, "", "", "usa", ls="--")
@@ -278,20 +282,22 @@ def secuencias():
                ("ViajeController", "BD", "expira_en = ahora + 2 h", "sync"),
                ("PlacaTemporal", "BD", "limpieza cada 10 min: DELETE vencidas", "sync")])
 
-    secuencia("03_4_secuencia_reporte_moderacion.png", "Secuencia · Reporte comunitario y moderación humana",
-              ["Usuaria A", "Usuaria B y C", "ReporteController", "Moderadora", "Auditoría", "BD"],
-              [("Usuaria A", "ReporteController", "POST /api/reportes {municipio, referencia, categoría}", "sync"),
-               ("ReporteController", "ReporteController", "valida: sin teléfonos/correos/enlaces", "sync"),
-               ("ReporteController", "BD", "geocodifica referencia → INSERT reporte ACTIVO", "sync"),
-               ("ReporteController", "Usuaria A", "201 + puntos + insignias nuevas", "ret"),
-               ("Usuaria B y C", "ReporteController", "POST /reportes/:id/denunciar (cada una)", "sync"),
-               ("ReporteController", "BD", "denuncias = 2 → estado EN_REVISION", "sync"),
-               ("ReporteController", "Auditoría", "REPORTE_A_REVISION (actor: sistema)", "sync"),
-               ("Moderadora", "ReporteController", "GET /moderacion/cola (rol validado en servidor)", "sync"),
-               ("nota", "Moderadora", "UNA PERSONA decide; el algoritmo nunca oculta por sí solo"),
-               ("Moderadora", "ReporteController", "POST /moderacion/:id/resolver {decisión, nota ≥ 5}", "sync"),
-               ("ReporteController", "Auditoría", "REPORTE_OCULTADO / RESTAURADO + justificación", "sync"),
-               ("ReporteController", "BD", "estado = OCULTO | ACTIVO", "sync")])
+    secuencia("03_4_secuencia_reporte_moderacion.png", "Secuencia · Reporte con lugar verificado y moderación",
+              ["Usuaria A", "ReporteController", "Verificador", "Nominatim", "Moderadora", "BD"],
+              [("Usuaria A", "ReporteController", "POST /api/reportes {municipio, referencia, categoría, punto}", "sync"),
+               ("ReporteController", "ReporteController", "valida entrada: sin teléfonos, correos ni enlaces", "sync"),
+               ("ReporteController", "Verificador", "verificarUbicacion(referencia, punto)", "sync"),
+               ("Verificador", "Nominatim", "buscar «referencia» dentro del municipio", "sync"),
+               ("Nominatim", "Verificador", "lugares | ninguno | sin servicio", "ret"),
+               ("nota", "Verificador", "Sin lugar: 422 · punto a más de 600 m: 422 · sin servicio: 503"),
+               ("Verificador", "ReporteController", "coordenadas verificadas", "ret"),
+               ("ReporteController", "BD", "INSERT reporte ACTIVO (la autora no se expone)", "sync"),
+               ("Moderadora", "ReporteController", "GET /moderacion/reportes (todos los estados)", "sync"),
+               ("ReporteController", "Moderadora", "reportes con alias anónimo de la autora", "ret"),
+               ("nota", "Moderadora", "UNA PERSONA decide; no ve identidades ni puede borrar cuentas"),
+               ("Moderadora", "ReporteController", "POST /moderacion/reportes/:id/resolver {decisión, nota}", "sync"),
+               ("Moderadora", "ReporteController", "POST .../limitar-autora {días, nota} (reversible)", "sync"),
+               ("ReporteController", "BD", "estado, limitada_hasta + auditoría con alias", "sync")])
 
 
 # ───────────────────────────── 4. ACTIVIDADES ─────────────────────────────
@@ -300,7 +306,7 @@ def actividades():
     ax.add_patch(Rectangle((4, 4), 66, 192, fc="#faf8ff", ec=MEDIO, lw=1))
     ax.add_patch(Rectangle((70, 4), 96, 192, fc="white", ec=MEDIO, lw=1))
     ax.text(37, 192, "Usuaria", ha="center", fontsize=10, fontweight="bold", color=PRI)
-    ax.text(118, 192, "Sistema Luma", ha="center", fontsize=10, fontweight="bold", color=PRI)
+    ax.text(118, 192, "Sistema Nova", ha="center", fontsize=10, fontweight="bold", color=PRI)
 
     def nodo(x, y, t, w=48, h=7.4, fc="white", **k):
         caja(ax, x - w / 2, y - h / 2, w, h, t, fc=fc, fs=7.6, **k)

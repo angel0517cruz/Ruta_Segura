@@ -37,17 +37,31 @@ async function pedir(url, opciones = {}) {
   }
 }
 
-// Nominatim exige máximo 1 consulta por segundo.
+/** El servicio externo no respondió (o está deshabilitado): se distingue de "no hay resultados". */
+export class ServicioNoDisponible extends Error {
+  constructor(servicio) { super(`${servicio} no disponible`); this.servicio = servicio; }
+}
+
+// Nominatim exige máximo 1 consulta por segundo: las consultas se encolan y se espacian.
+let cola = Promise.resolve();
 let ultimaNominatim = 0;
-export async function geocodificar(texto, municipio) {
-  const clave = `geo:${municipio.nombre}:${texto.toLowerCase()}`;
-  const previo = deCache(clave);
-  if (previo !== undefined) return previo;
-  if (!config.apis.habilitadas) return [];
-  try {
+function esperarTurno() {
+  const turno = cola.then(async () => {
     const espera = ultimaNominatim + 1100 - Date.now();
     if (espera > 0) await new Promise((r) => setTimeout(r, espera));
     ultimaNominatim = Date.now();
+  });
+  cola = turno.catch(() => {});
+  return turno;
+}
+
+async function geocodificarReal(texto, municipio) {
+  const clave = `geo:${municipio.nombre}:${texto.toLowerCase()}`;
+  const previo = deCache(clave);
+  if (previo !== undefined) return previo;
+  if (!config.apis.habilitadas) throw new ServicioNoDisponible('Nominatim');
+  try {
+    await esperarTurno();
     const d = 0.08; // ≈ 9 km alrededor del centro del municipio
     const caja = `${municipio.lng - d},${municipio.lat + d},${municipio.lng + d},${municipio.lat - d}`;
     const q = encodeURIComponent(`${texto}, ${municipio.nombre}, Cundinamarca, Colombia`);
@@ -55,9 +69,15 @@ export async function geocodificar(texto, municipio) {
     const resultado = datos.map((x) => ({ nombre: x.display_name, lat: Number(x.lat), lng: Number(x.lon) }));
     return aCache(clave, resultado);
   } catch {
-    return [];
+    throw new ServicioNoDisponible('Nominatim');
   }
 }
+
+let geocodificador = geocodificarReal;
+/** Permite sustituir el geocodificador (pruebas automáticas sin red). */
+export function usarGeocodificador(fn) { geocodificador = fn ?? geocodificarReal; }
+/** @returns {Promise<{nombre:string,lat:number,lng:number}[]>} lanza ServicioNoDisponible si el servicio falla */
+export const geocodificar = (texto, municipio) => geocodificador(texto, municipio);
 
 function parseHorario(oh) {
   if (!oh) return { abre: 8, cierra: 20, estimado: true };

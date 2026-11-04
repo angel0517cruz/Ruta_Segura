@@ -1,12 +1,13 @@
 import { createHash } from 'node:crypto';
-import { haversine, horaColombia } from '../../shared/geo.js';
+import { horaColombia } from '../../shared/geo.js';
 import { config } from '../config.js';
 import { ErrorApp } from '../middleware/errores.js';
 import { Auditoria } from '../models/comunidad.js';
 import { Municipio } from '../models/municipio.js';
 import { Reporte, vistaPublica } from '../models/reporte.js';
 import { Usuaria } from '../models/usuaria.js';
-import { geocodificar } from '../services/externos.js';
+import { aIso } from '../models/util.js';
+import { verificarUbicacion } from '../services/ubicacion.js';
 import { evaluarInsignias, PUNTOS } from '../services/insignias.js';
 import { denunciaSchema, filtroReportesSchema, reporteSchema } from '../services/validaciones.js';
 
@@ -29,19 +30,15 @@ export async function crear(req, res) {
     throw new ErrorApp(429, 'Llegaste al límite de reportes por hora. Gracias por cuidar tu entorno; vuelve más tarde.', 'LIMITE_REPORTES');
   }
 
-  let punto;
-  let precision = 'EXACTA';
-  if (d.lat != null && d.lng != null) {
-    punto = { lat: d.lat, lng: d.lng };
-    if (haversine(punto, municipio) > 20_000) throw new ErrorApp(422, 'Ese punto está lejos del municipio elegido.', 'FUERA_DE_MUNICIPIO');
-  } else {
-    const [mejor] = await geocodificar(d.referencia, municipio);
-    if (mejor) punto = { lat: mejor.lat, lng: mejor.lng };
-    else {
-      punto = puntoAproximado(municipio, d.referencia);
-      precision = 'APROXIMADA';
-    }
+  if (req.usuaria.limitada_hasta && new Date(aIso(req.usuaria.limitada_hasta)) > new Date()) {
+    throw new ErrorApp(403, 'Tu publicación de reportes está limitada temporalmente por moderación. Puedes seguir consultando y verificando.', 'PUBLICACION_LIMITADA');
   }
+
+  // El lugar debe existir: se verifica la referencia en el municipio y, si hay punto marcado, que coincida con ella.
+  const ubicacion = await verificarUbicacion({ referencia: d.referencia, lat: d.lat, lng: d.lng }, municipio);
+  let punto = ubicacion.lat != null ? { lat: ubicacion.lat, lng: ubicacion.lng } : null;
+  let precision = 'EXACTA';
+  if (!punto) { punto = puntoAproximado(municipio, d.referencia); precision = 'APROXIMADA'; } // solo en modo sin verificación
 
   const reporte = await Reporte.crear({
     usuariaId: req.usuaria.id,

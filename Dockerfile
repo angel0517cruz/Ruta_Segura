@@ -10,8 +10,8 @@ COPY src ./src
 COPY public ./public
 
 # Ejecuta como usuario sin privilegios (mínimo privilegio)
-RUN addgroup -S luma && adduser -S luma -G luma
-USER luma
+RUN addgroup -S nova && adduser -S nova -G nova
+USER nova
 
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=4s CMD wget -qO- http://127.0.0.1:3000/api/salud || exit 1

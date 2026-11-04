@@ -91,9 +91,33 @@ export const verificacionSchema = z.object({
 export const denunciaSchema = z.object({ motivo: textoSeguro(0, 200).optional() });
 
 export const resolverSchema = z.object({
-  decision: z.enum(['OCULTAR', 'RESTAURAR']),
+  decision: z.enum(['OCULTAR', 'RESTAURAR', 'RESUELTO']),
   nota: textoSeguro(5, 300),
 });
+
+export const limitarAutoraSchema = z.object({
+  dias: z.number().int().min(0).max(30), // 0 levanta la limitación
+  nota: textoSeguro(5, 300),
+});
+
+export const filtroModeracionSchema = z.object({
+  estado: z.enum(['ACTIVO', 'EN_REVISION', 'OCULTO', 'RESUELTO']).optional(),
+  municipio_id: z.coerce.number().int().positive().optional(),
+  limite: z.coerce.number().int().min(1).max(200).default(100),
+});
+
+export const puntoSeguridadSchema = z.object({
+  tipo: z.enum(['LUMINARIA', 'CAMARA', 'COMERCIO']),
+  nombre: textoSeguro(0, 60).optional(),
+  municipio_id: z.number().int().positive(),
+  lat,
+  lng,
+  abre: z.number().int().min(0).max(23).optional(),
+  cierra: z.number().int().min(1).max(24).optional(),
+});
+
+export const estadoPuntoSchema = z.object({ activo: z.boolean(), nota: textoSeguro(5, 300) });
+export const repararSchema = z.object({ nota: textoSeguro(5, 300) });
 
 export const bboxSchema = z.object({
   sur: z.coerce.number().min(-90).max(90),

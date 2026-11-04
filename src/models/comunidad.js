@@ -3,8 +3,22 @@ import { db } from '../db/index.js';
 import { ahoraIso, haceDias, haceHoras } from './util.js';
 
 export const PuntoSeguridad = {
+  /** Solo puntos activos: los que usa el algoritmo y el mapa. */
   delMunicipio: (municipioId) =>
-    db.todos('SELECT id, tipo, nombre, lat, lng, abre, cierra, fuente FROM puntos_seguridad WHERE municipio_id = ?', [municipioId]),
+    db.todos('SELECT id, tipo, nombre, lat, lng, abre, cierra, fuente FROM puntos_seguridad WHERE municipio_id = ? AND activo = 1', [municipioId]),
+  /** Todos (incluye desactivados): curaduría por moderación. */
+  paraModeracion: (municipioId) =>
+    db.todos('SELECT id, tipo, nombre, lat, lng, abre, cierra, fuente, activo FROM puntos_seguridad WHERE municipio_id = ? ORDER BY id DESC LIMIT 300', [municipioId]),
+  porId: (id) => db.uno('SELECT * FROM puntos_seguridad WHERE id = ?', [id]),
+  async crear(d) {
+    const { filas } = await db.ejecutar(
+      `INSERT INTO puntos_seguridad (tipo, nombre, municipio_id, lat, lng, abre, cierra, fuente, creado_por)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'moderacion', ?) RETURNING id`,
+      [d.tipo, d.nombre ?? null, d.municipioId, d.lat, d.lng, d.abre ?? null, d.cierra ?? null, d.creadoPor],
+    );
+    return filas[0].id;
+  },
+  cambiarActivo: (id, activo) => db.ejecutar('UPDATE puntos_seguridad SET activo = ? WHERE id = ?', [activo ? 1 : 0, id]),
 };
 
 export const Verificacion = {
@@ -26,7 +40,17 @@ export const Verificacion = {
   vigentes(tipo, horas) {
     return db.todos('SELECT lat, lng FROM verificaciones WHERE tipo = ? AND creada_en > ?', [tipo, haceHoras(horas)]);
   },
-  vigentesLuminarias: () => Verificacion.vigentes('LUMINARIA_DANADA', 24 * 30),
+  vigentesLuminarias: () =>
+    db.todos('SELECT lat, lng FROM verificaciones WHERE tipo = ? AND creada_en > ? AND resuelta = 0', ['LUMINARIA_DANADA', haceDias(30)]),
+  /** Luminarias dañadas aún sin reparar (con id) para la gestión de moderación. */
+  luminariasPendientes: () =>
+    db.todos("SELECT id, lat, lng, creada_en FROM verificaciones WHERE tipo = 'LUMINARIA_DANADA' AND resuelta = 0 AND creada_en > ? ORDER BY creada_en DESC LIMIT 100", [haceDias(30)]),
+  porId: (id) => db.uno('SELECT * FROM verificaciones WHERE id = ?', [id]),
+  marcarResuelta: (id) => db.ejecutar('UPDATE verificaciones SET resuelta = 1 WHERE id = ?', [id]),
+  async aportes7dias() {
+    const f = await db.uno('SELECT COUNT(*) AS n FROM verificaciones WHERE creada_en > ?', [haceDias(7)]);
+    return Number(f.n);
+  },
   vigentesRutasOk: () => Verificacion.vigentes('RUTA_OK', 24 * 7),
   vigentesComercios: () => Verificacion.vigentes('COMERCIO_ABIERTO', 3),
   async conteos(usuariaId) {

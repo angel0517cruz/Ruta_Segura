@@ -25,12 +25,14 @@ export const config = {
   placaTtlMaxHoras: 12, // tope si el viaje nunca se cierra
   limiteReportesHora: Number(env.LIMITE_REPORTES_HORA || 10),
   puntosDiariosMax: 40,
+  verificarUbicacion: env.VERIFICAR_UBICACION !== '0', // exige que referencia y punto existan (Nominatim)
+  radioCoincidenciaM: 600, // distancia máxima entre el punto marcado y el lugar geocodificado
   umbralDenuncias: 2, // denuncias de usuarias que envían un reporte a revisión humana
   apis: {
     nominatim: env.NOMINATIM_URL || 'https://nominatim.openstreetmap.org',
     overpass: env.OVERPASS_URL || 'https://overpass-api.de/api/interpreter',
     ruteo: env.ROUTING_URL || 'https://routing.openstreetmap.de/routed-foot',
-    userAgent: env.APP_USER_AGENT || 'LumaRutaSegura/1.0 (proyecto academico; ver README)',
+    userAgent: env.APP_USER_AGENT || 'NovaRutaSegura/1.0 (proyecto academico; ver README)',
     habilitadas: env.APIS_EXTERNAS !== '0', // 0 en pruebas y modo sin conexión
     timeoutMs: 6000,
   },

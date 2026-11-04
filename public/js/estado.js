@@ -5,13 +5,13 @@ const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } 
 export const estado = {
   usuaria: null,
   municipios: [],
-  municipioId: guardado('luma.municipio', null),
+  municipioId: guardado('nova.municipio', null),
   hora: null, // hora elegida en el reloj nocturno (null = ahora)
   viaje: null,
-  onboardingVisto: guardado('luma.onboarding', false),
+  onboardingVisto: guardado('nova.onboarding', false),
   get municipio() { return this.municipios.find((m) => m.id === this.municipioId) ?? this.municipios[0]; },
-  elegirMunicipio(id) { this.municipioId = id; guardar('luma.municipio', id); document.dispatchEvent(new CustomEvent('municipio')); },
-  marcarOnboarding() { this.onboardingVisto = true; guardar('luma.onboarding', true); },
+  elegirMunicipio(id) { this.municipioId = id; guardar('nova.municipio', id); document.dispatchEvent(new CustomEvent('municipio')); },
+  marcarOnboarding() { this.onboardingVisto = true; guardar('nova.onboarding', true); },
 };
 
 export const esNocheHora = (h) => h >= 18 || h < 6;

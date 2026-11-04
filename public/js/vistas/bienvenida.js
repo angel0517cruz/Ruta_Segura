@@ -4,7 +4,7 @@ import { estado } from '../estado.js';
 import { h, icono, toast } from '../ui.js';
 
 const logoLuna = () => {
-  const s = icono('luna', 'luna-logo');
+  const s = icono('nova', 'luna-logo');
   s.setAttribute('stroke-width', '1.4');
   return s;
 };
@@ -32,7 +32,7 @@ function luciernagas(lienzo) {
       px = b.x * ancho; py = b.y * alto;
       const brillo = 0.45 + 0.55 * Math.abs(Math.sin(t / 900 + b.f));
       const g = ctx.createRadialGradient(px, py, 0, px, py, b.r * 9);
-      g.addColorStop(0, `rgba(230,220,255,${brillo})`); g.addColorStop(0.3, `rgba(182,156,255,${brillo * 0.45})`); g.addColorStop(1, 'rgba(155,123,255,0)');
+      g.addColorStop(0, `rgba(246,237,220,${brillo})`); g.addColorStop(0.3, `rgba(205,180,143,${brillo * 0.45})`); g.addColorStop(1, 'rgba(155,123,255,0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, b.r * 9, 0, 6.29); ctx.fill();
     }
     raf = requestAnimationFrame(paso);
@@ -42,7 +42,7 @@ function luciernagas(lienzo) {
 }
 
 const PASOS = [
-  { icono: 'ruta', titulo: 'El camino más <em>iluminado</em>, no solo el más corto', texto: 'Luma compara rutas según luminarias, cámaras y comercios abiertos a la hora en que caminas.' },
+  { icono: 'ruta', titulo: 'El camino más <em>iluminado</em>, no solo el más corto', texto: 'Nova compara rutas según luminarias, cámaras y comercios abiertos a la hora en que caminas.' },
   { icono: 'alerta', titulo: 'Te avisamos <em>si te desvías</em>', texto: 'Mientras caminas, una alerta suave y clara te dice si te alejas de la ruta planeada.' },
   { icono: 'estrella', titulo: 'Una comunidad que <em>cuida</em>', texto: 'Cada reporte y cada luminaria dañada que marcas mejora el mapa para todas. Ganas insignias de confianza.' },
 ];
@@ -67,11 +67,11 @@ export function pantallaBienvenida(raiz) {
   siguiente.addEventListener('click', () => { if (paso < PASOS.length - 1) { paso++; pintar(); } else location.hash = '#/registro'; });
 
   const hero = h('div', { class: 'hero' },
-    h('div', { class: 'logo' }, logoLuna(), 'Luma'),
+    h('div', { class: 'logo' }, logoLuna(), 'Nova'),
     h('div', { class: 'pila entra' }, h('span', { class: 'etiqueta' }, icono('escudo'), 'Ruta segura · Cundinamarca'), titulo, texto),
     puntos,
     h('div', { class: 'fila' }, siguiente, saltar),
-    h('p', { class: 'ayuda-txt' }, 'Luma es una herramienta colaborativa de información. No reemplaza a las autoridades ni incluye botón de pánico.'));
+    h('p', { class: 'ayuda-txt' }, 'Nova es una herramienta colaborativa de información. No reemplaza a las autoridades ni incluye botón de pánico.'));
   raiz.replaceChildren(lienzo, hero);
   pintar();
   const parar = luciernagas(lienzo);
@@ -136,13 +136,13 @@ export function pantallaAcceso(raiz, modo) {
 
   const lienzo = h('canvas', { 'aria-hidden': 'true' });
   const tarjeta = h('div', { class: 'hero' },
-    h('a', { class: 'logo', href: '#/', 'aria-label': 'Luma, volver al inicio', style: 'text-decoration:none;color:inherit' }, logoLuna(), 'Luma'),
+    h('a', { class: 'logo', href: '#/', 'aria-label': 'Nova, volver al inicio', style: 'text-decoration:none;color:inherit' }, logoLuna(), 'Nova'),
     h('div', { class: 'pila entra' },
       h('h1', {}, registro ? 'Crea tu espacio seguro' : 'Qué bueno verte de nuevo'),
       h('p', { class: 'suave' }, registro ? 'Solo necesitas un correo. Tus reportes son anónimos para las demás usuarias.' : 'Entra para planear tu próxima caminata.')),
     h('div', { class: 'tarjeta' }, form),
     h('p', { class: 'suave' }, registro ? '¿Ya tienes cuenta? ' : '¿Primera vez? ', h('a', { href: registro ? '#/entrar' : '#/registro' }, registro ? 'Entra aquí' : 'Crea una cuenta')),
-    !registro && estado.demo ? h('p', { class: 'ayuda-txt' }, 'Demostración: sofia@demo.co · Luna2026!') : null);
+    null);
   raiz.replaceChildren(lienzo, tarjeta);
   const parar = luciernagas(lienzo);
   (campos.nombre ?? campos.email).entrada.focus();

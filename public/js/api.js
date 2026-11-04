@@ -1,5 +1,5 @@
 // Cliente de la API. El token vive en sessionStorage (se borra al cerrar la pestaña: pensado para equipos compartidos).
-const CLAVE = 'luma.token';
+const CLAVE = 'nova.token';
 
 export const sesion = {
   token: () => { try { return sessionStorage.getItem(CLAVE); } catch { return null; } },

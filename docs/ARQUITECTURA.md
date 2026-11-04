@@ -24,15 +24,15 @@ Navegador (SPA, JS sin framework)           Servidor Node.js 22 + Express 5     
 | # | Decisión | Alternativas | Razón |
 |---|---|---|---|
 | 1 | **Node.js + Express 5** | Python/Flask (proyecto anterior), NestJS | Pedido de trabajar en JavaScript; un solo lenguaje cliente/servidor permite compartir `geo.js`. |
-| 2 | **PostgreSQL en producción, SQLite en desarrollo** con un adaptador de ~40 líneas y SQL único con `?` | ORM (Prisma), solo PostgreSQL | Cumple el enunciado sin exigir instalar un servidor para desarrollar ni para correr 27 pruebas en memoria. |
+| 2 | **PostgreSQL en producción, SQLite en desarrollo** con un adaptador de ~40 líneas y SQL único con `?` | ORM (Prisma), solo PostgreSQL | Cumple el enunciado sin exigir instalar un servidor para desarrollar ni para correr 40 pruebas en memoria. |
 | 3 | **JWT HS256 de 2 h en `Authorization: Bearer`**, guardado en `sessionStorage` | Cookie httpOnly, OAuth | Sin cookies no hay CSRF; `sessionStorage` se borra al cerrar la pestaña (equipos compartidos). Se mitiga XSS con CSP estricta y `textContent`. Evolución: cookie httpOnly + refresh. |
 | 4 | **Frontend sin framework ni CDN** (módulos ES, Leaflet y fuentes servidos localmente) | React/Vite, CDN | CSP sin `unsafe-inline` en scripts, sin rastreadores, sin paso de compilación, arranque inmediato. |
 | 5 | **Seguridad calculada en el servidor con funciones puras** | Calcularla en cliente | Los datos de la comunidad no se exponen en bruto y el algoritmo es auditable y testeable. |
 | 6 | **Candidatas = OSRM peatonal + vías por «atractores»** | Dijkstra propio con costos | No hay red vial propia; reutilizar OSM y puntuar a posteriori entrega rutas reales con un algoritmo explicable. |
 | 7 | **GPS procesado en el dispositivo** | Enviar posición al servidor | Privacidad por diseño; el reto excluye seguimiento en tiempo real. |
 | 8 | **Placa y foto cifradas (AES-256-GCM) con vencimiento** | Texto plano, almacenamiento indefinido | Minimización y confidencialidad; se purga cada 10 min. Sin OCR en servidor (no se envían fotos a terceros). |
-| 9 | **Moderación humana auditada** | Moderación automática | El algoritmo nunca oculta contenido; ver `docs/IA_Responsable_HITL.docx`. |
-| 10 | **Degradación elegante** de las APIs externas | Fallar si no responden | Overpass llegó a tardar 25 s durante el desarrollo; la app responde con base propia y avisa. |
+| 9 | **Moderación humana auditada, sobre contenido y datos (no sobre personas): alias anónimo, sanción solo temporal, sin borrar cuentas** | Moderación automática; moderadora con acceso a identidades y a eliminar cuentas | El algoritmo nunca oculta contenido; ver `docs/IA_Responsable_Nova.docx`. |
+| 10 | **Degradación elegante** de las APIs externas (excepto la verificación de lugares: sin servicio, no se publica) | Fallar si no responden | Overpass llegó a tardar 25 s durante el desarrollo; la app responde con base propia y avisa. Un reporte no se publica sin comprobar que el lugar existe. |
 | 11 | **Datos de demostración simulados y etiquetados** sobre calles reales de OSM | Datos inventados sin calles | Rutas reales interactúan con datos coherentes; la interfaz declara que son simulados. |
 
 ## 3. Algoritmo de ruta segura
@@ -68,17 +68,19 @@ Pruebas que lo respaldan: `test/api.test.js` (tokens falsos, 403 por rol, bloque
 
 ## 5. Accesibilidad (WCAG 2.1 AA)
 
-Contrastes **medidos** (relación de luminancia WCAG) sobre `#150c33`:
+Contrastes **medidos** (relación de luminancia WCAG) sobre el fondo `#150c33`:
 
 | Par | Relación | Requisito |
 |---|---|---|
-| Texto principal `#f1ebff` | 15,96 : 1 | ≥ 4,5 ✔ |
-| Texto suave `#c4b6e8` | 9,89 : 1 | ≥ 4,5 ✔ |
-| Marcador de posición `#9d8fc5` sobre campo `#0b0620` | 6,76 : 1 | ≥ 4,5 ✔ |
-| Alerta `#ff6f9c` | 7,07 : 1 | ≥ 4,5 ✔ |
-| Botón primario: blanco sobre `#7c4dff` (extremo más claro del degradado) | 4,81 : 1 | ≥ 4,5 ✔ |
-| Botón de peligro: blanco sobre `#d6336c` | 4,62 : 1 | ≥ 4,5 ✔ |
-| Borde de campos `#7b69b5` | 4,00 : 1 | ≥ 3 ✔ (1.4.11) |
+| Texto principal crema `#f8f0e3` | 16,4 : 1 | ≥ 4,5 ✔ |
+| Texto suave `#d8c9b3` | 11,4 : 1 | ≥ 4,5 ✔ |
+| Beige `#e8d6b8` | 13,0 : 1 | ≥ 4,5 ✔ |
+| Arena `#cdb48f` | 9,3 : 1 | ≥ 4,5 ✔ |
+| Marcador de posición `#b4a58f` sobre campo `#0b0620` | 8,2 : 1 | ≥ 4,5 ✔ |
+| Alerta `#ff6f9c` | 7,1 : 1 | ≥ 4,5 ✔ |
+| Botón primario: blanco sobre `#7c4dff` (extremo más claro del degradado) | 4,8 : 1 | ≥ 4,5 ✔ |
+| Botón de peligro: blanco sobre `#d6336c` | 4,6 : 1 | ≥ 4,5 ✔ |
+| Borde de campos y controles `#8a76b8` | 4,7 : 1 | ≥ 3 ✔ (1.4.11) |
 
 Otros criterios aplicados: nombre accesible en todos los íconos, `aria-live` para estados y alertas de desvío, `radiogroup`, `aria-modal`, foco visible de 3 px, enlace «Saltar al contenido», significado no solo por color (los tramos de baja seguridad van punteados), `prefers-reduced-motion` y `prefers-contrast`, objetivos táctiles ≥ 40 px, lista de reportes como equivalente del mapa.
 **Aún sin hacer:** prueba con lectores de pantalla reales (NVDA/TalkBack) y auditoría de un tercero.
@@ -93,4 +95,4 @@ Otros criterios aplicados: nombre accesible en todos los íconos, `aria-live` pa
 
 ## 7. Pruebas
 
-`npm test` ejecuta 27 pruebas (node:test, base SQLite en memoria, sin red): autenticación y autorización, reportes y moderación, rutas, mapa de calor, placa temporal cifrada, gamificación y geometría/monitor de desvío. La integración continua las corre en cada cambio.
+`npm test` ejecuta 40 pruebas (node:test, base SQLite en memoria, sin red): autenticación y autorización, reportes y moderación, rutas, mapa de calor, placa temporal cifrada, gamificación y geometría/monitor de desvío. La integración continua las corre en cada cambio.

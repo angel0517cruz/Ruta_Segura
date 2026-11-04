@@ -36,7 +36,7 @@ export async function render(cont) {
   cont.append(h('div', { class: 'pila entra' },
     h('div', { class: 'fila entre' },
       h('div', {}, h('span', { class: 'etiqueta' }, icono('luna'), 'Mapa nocturno'), h('h2', {}, 'Dónde cuidarte, y cuándo')),
-      h('span', { class: 'puntos-demo', title: 'Los puntos de seguridad y reportes iniciales son simulados para la demostración' }, 'Datos de demostración')),
+      ),
     h('div', { class: 'campo' }, h('label', { for: 'mun-inicio' }, 'Municipio'), selectorMun),
     reloj,
     h('div', { class: 'leyenda', 'aria-hidden': 'true' }, 'Menos', h('i'), 'Más riesgo'),

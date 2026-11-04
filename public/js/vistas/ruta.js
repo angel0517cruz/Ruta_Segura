@@ -138,7 +138,7 @@ export async function render(cont, { ir }) {
       h('div', { class: 'pila entra' }, ...tarjetas),
       h('div', { class: 'aviso info', 'aria-live': 'polite' }, icono('escudo'), explicacion(seleccionada, corta)),
       h('button', { class: 'btn bloque', type: 'button', onclick: iniciar }, icono('play'), 'Empezar caminata con alertas'),
-      h('p', { class: 'ayuda-txt' }, `Datos: ${resultado.fuentes.map((f) => (f === 'openstreetmap' ? 'OpenStreetMap' : 'base de Luma')).join(' + ')}. Ninguna ruta garantiza tu seguridad: confía en lo que ves y sientes.`)].filter(Boolean));
+      h('p', { class: 'ayuda-txt' }, `Datos: ${resultado.fuentes.map((f) => (f === 'openstreetmap' ? 'OpenStreetMap' : 'base de Nova')).join(' + ')}. Ninguna ruta garantiza tu seguridad: confía en lo que ves y sientes.`)].filter(Boolean));
     pintarMapa();
   }
 
@@ -157,7 +157,7 @@ export async function render(cont, { ir }) {
 
   cont.append(h('div', { class: 'pila entra' },
     h('div', {}, h('span', { class: 'etiqueta' }, icono('ruta'), `Navegación inteligente · ${mun.nombre}`), h('h2', {}, 'Elige tu camino')),
-    h('div', { class: 'fila' }, h('button', { class: 'chip', type: 'button', onclick: ejemplo }, icono('play'), 'Probar con un trayecto de ejemplo'), ayuda('Luma puntúa cada tramo con luminarias, cámaras, comercios abiertos a tu hora y reportes de la comunidad. Prioriza la seguridad, sin pasar de +60 % de distancia.')),
+    h('div', { class: 'fila' }, h('button', { class: 'chip', type: 'button', onclick: ejemplo }, icono('play'), 'Probar con un trayecto de ejemplo'), ayuda('Nova puntúa cada tramo con luminarias, cámaras, comercios abiertos a tu hora y reportes de la comunidad. Prioriza la seguridad, sin pasar de +60 % de distancia.')),
     campoLugar('origen', 'Desde', 'ubicacion'),
     campoLugar('destino', 'Hasta', 'bandera'),
     estadoBusqueda,

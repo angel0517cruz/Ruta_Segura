@@ -6,7 +6,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { MUNICIPIOS } from '../src/db/seed.js';
 
 const ESPEJOS = ['https://overpass.kumi.systems/api/interpreter', 'https://overpass-api.de/api/interpreter'];
-const UA = 'LumaRutaSegura/1.0 (proyecto academico)';
+const UA = 'NovaRutaSegura/1.0 (proyecto academico)';
 const DY = 0.0095; // ≈ 1,05 km
 const DX = 0.0095;
 

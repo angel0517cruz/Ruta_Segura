@@ -110,7 +110,7 @@ export function pintarCalles(calles) {
 export const limpiarCalles = () => capas.calles.clearLayers();
 
 // ── Rutas: "hilo de luz"
-const COLOR_NIVEL = { ALTO: '#e6dcff', MEDIO: '#ffc971', BAJO: '#ff6f9c' };
+const COLOR_NIVEL = { ALTO: '#f6eddc', MEDIO: '#ffc971', BAJO: '#ff6f9c' };
 export function limpiarRutas() { capas.rutas.clearLayers(); }
 export function pintarRuta(ruta, { activa = true } = {}) {
   const ll = (p) => [p.lat, p.lng];
@@ -152,7 +152,7 @@ export function pintarPois(datos, visibles) {
   const dibujar = (lista, color, extra = '') => {
     for (const p of lista) capas.pois.addLayer(L.marker([p.lat, p.lng], { interactive: false, icon: L.divIcon({ className: '', iconSize: [12, 12], html: `<div class="punto-poi ${extra}" style="--c:${color}"></div>` }) }));
   };
-  if (visibles.luces) { dibujar(datos.luminarias, '#e6dcff'); dibujar(datos.luminarias_danadas, '#ff6f9c', 'danada'); }
+  if (visibles.luces) { dibujar(datos.luminarias, '#f6eddc'); dibujar(datos.luminarias_danadas, '#ff6f9c', 'danada'); }
   if (visibles.camaras) dibujar(datos.camaras, '#7ef0ff');
   if (visibles.comercios) { dibujar(datos.comercios, '#ffc971'); dibujar(datos.comercios_confirmados, '#86f0d0'); }
 }

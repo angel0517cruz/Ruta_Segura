@@ -2,6 +2,7 @@
 process.env.NODE_ENV = 'test';
 process.env.SQLITE_PATH = ':memory:';
 process.env.APIS_EXTERNAS = '0';
+process.env.VERIFICAR_UBICACION = '0'; // las pruebas de verificación la activan con un geocodificador simulado
 process.env.BCRYPT_COSTO = '4';
 process.env.JWT_SECRET = 'x'.repeat(40);
 process.env.DATA_KEY = 'y'.repeat(40);

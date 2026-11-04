@@ -119,7 +119,7 @@ export async function render(cont, { ir }) {
     pararGps(); pasoSim = Math.max(0, Math.round(monitor.actualizar(posicion).avanceM / 13));
     simulador = setInterval(tick, 650);
     botonSim.replaceChildren(icono('cerrar'), 'Detener simulación');
-    toast('Modo demostración: la posición es simulada.');
+    toast('Simulación activa: la posición es simulada.');
   });
   botonDesvio.addEventListener('click', () => {
     if (!simulador) botonSim.click();
@@ -151,7 +151,7 @@ export async function render(cont, { ir }) {
     h('div', {}, h('span', { class: 'etiqueta' }, icono('escudo'), `Caminata en curso · puntaje ${viaje.puntaje}`), h('h2', {}, viaje.destino_texto ? `Hacia ${viaje.destino_texto}` : 'Tu caminata')),
     texto, barra, detalle, acciones,
     h('div', { class: 'fila' }, botonSim, botonDesvio),
-    h('p', { class: 'ayuda-txt' }, 'Tu posición se procesa solo en este dispositivo. Luma no te rastrea ni la comparte con nadie.'),
+    h('p', { class: 'ayuda-txt' }, 'Tu posición se procesa solo en este dispositivo. Nova no te rastrea ni la comparte con nadie.'),
     h('div', { class: 'fila' },
       h('button', { class: 'btn', type: 'button', onclick: () => terminar('FINALIZADO') }, icono('check'), 'Terminar caminata'),
       h('button', { class: 'btn sec', type: 'button', onclick: () => { if (window.confirm('¿Cancelar esta caminata?')) terminar('CANCELADO'); } }, 'Cancelar'))));
@@ -159,7 +159,7 @@ export async function render(cont, { ir }) {
 
   pintarEstado(monitor.actualizar(coords[0]));
   mapa.posicionYo(coords[0]);
-  pararGps = seguirPosicion((p) => { if (vivo && !simulador) procesar(p); }, () => toast('Sin GPS: usa “Simular caminata” para la demostración.'));
+  pararGps = seguirPosicion((p) => { if (vivo && !simulador) procesar(p); }, () => toast('No pudimos usar el GPS. Puedes probar con “Simular caminata”.'));
 
   return () => {
     vivo = false;

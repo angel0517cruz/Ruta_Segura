@@ -7,7 +7,7 @@ await prepararBase();
 iniciarLimpieza();
 
 const servidor = crearApp().listen(config.puerto, () => {
-  console.log(`Luma · Ruta Segura escuchando en http://localhost:${config.puerto}`);
+  console.log(`Nova · Ruta Segura escuchando en http://localhost:${config.puerto}`);
 });
 
 for (const senal of ['SIGINT', 'SIGTERM']) {

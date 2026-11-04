@@ -31,7 +31,8 @@ export const ir = (ruta) => { location.hash = `#${ruta}`; };
 
 function dibujarNav(actual) {
   const nav = $('nav');
-  nav.replaceChildren(...NAV.map((n) => {
+  const items = estado.usuaria?.rol === 'MODERADORA' ? [...NAV.slice(0, 4), { ruta: '/moderacion', icono: 'mod', texto: 'Moderar' }, NAV[4]] : NAV;
+  nav.replaceChildren(...items.map((n) => {
     const a = h('a', { href: `#${n.ruta}`, 'aria-current': n.ruta === actual ? 'page' : null, 'aria-label': n.texto },
       n.central ? h('span', { class: 'orbe' }, icono(n.icono)) : icono(n.icono), n.central ? null : h('span', {}, n.texto));
     if (n.central) a.classList.add('central');
@@ -74,7 +75,7 @@ async function arrancar() {
   if (sesion.token()) {
     try { estado.usuaria = (await api.get('/auth/yo')).usuaria; } catch { sesion.borrar(); }
   }
-  if (estado.usuaria?.municipio_id && !localStorage.getItem('luma.municipio')) estado.elegirMunicipio(estado.usuaria.municipio_id);
+  if (estado.usuaria?.municipio_id && !localStorage.getItem('nova.municipio')) estado.elegirMunicipio(estado.usuaria.municipio_id);
   const centro = estado.municipio ?? { lat: 5.0224, lng: -74.0046 };
   iniciarMapa(centro);
   if (estado.usuaria) {

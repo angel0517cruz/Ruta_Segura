@@ -21,6 +21,8 @@ Mínimo 5 personas (Nielsen: 5 detectan ~85 % de los problemas), idealmente de 2
 | T5 | Registrar la placa de un taxi (digitada o con foto) | Placa guardada | ≤ 45 s |
 | T6 | Mover el reloj nocturno y explicar qué cambió | Dice que el riesgo cambia con la hora | — |
 | T7 | Reportar una luminaria dañada y ver qué ganó | Menciona puntos/insignia | — |
+| T8 | Escribir un lugar que no existe al reportar y reaccionar al mensaje | Entiende que debe elegir un lugar de la lista | Corrige sin ayuda |
+| T9 (moderadora) | Encontrar el reporte que acaba de publicar, ocultarlo con justificación y limitar a su autora por alias | Completa la tarea y entiende que no ve identidades | ≤ 3 min |
 
 ## Medidas
 - Tasa de éxito sin ayuda por tarea (meta global ≥ 80 %).
@@ -40,9 +42,9 @@ Mínimo 5 personas (Nielsen: 5 detectan ~85 % de los problemas), idealmente de 2
 - [ ] Probado con NVDA o TalkBack
 
 ## Registro de resultados (completar)
-| Participante | Municipio | T1 | T2 | T3 | T4 | T5 | T6 | T7 | SUS | Observaciones |
-|---|---|---|---|---|---|---|---|---|---|---|
-| | | | | | | | | | | |
+| Participante | Municipio | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | SUS | Observaciones |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | | | |
 
 ## Problemas encontrados y decisiones
 | Problema | Severidad (1–4) | Decisión | Responsable | Estado |

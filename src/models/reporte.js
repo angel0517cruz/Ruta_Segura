@@ -63,5 +63,21 @@ export const Reporte = {
     const { filas } = await db.ejecutar('UPDATE reportes SET denuncias = denuncias + 1 WHERE id = ? RETURNING denuncias', [reporteId]);
     return filas[0].denuncias;
   },
+  /** Moderación: todos los estados, con la autora (el controlador solo expone un alias, nunca su identidad). */
+  paraModeracion({ estado, municipioId, limite = 100 }) {
+    const filtros = [];
+    const params = [];
+    if (estado) { filtros.push('r.estado = ?'); params.push(estado); }
+    if (municipioId) { filtros.push('r.municipio_id = ?'); params.push(municipioId); }
+    const donde = filtros.length ? `WHERE ${filtros.join(' AND ')}` : '';
+    return db.todos(`${SELECT} ${donde} ORDER BY r.id DESC LIMIT ${Number(limite)}`, params);
+  },
+  async metricas() {
+    const por = async (col) => Object.fromEntries((await db.todos(`SELECT ${col} AS k, COUNT(*) AS n FROM reportes GROUP BY ${col}`)).map((f) => [f.k, Number(f.n)]));
+    const porMunicipio = await db.todos("SELECT m.nombre AS k, COUNT(*) AS n FROM reportes r JOIN municipios m ON m.id = r.municipio_id WHERE r.estado = 'ACTIVO' GROUP BY m.nombre ORDER BY n DESC");
+    const horas = Array(24).fill(0);
+    for (const f of await db.todos("SELECT hora AS k, COUNT(*) AS n FROM reportes WHERE estado = 'ACTIVO' GROUP BY hora")) horas[f.k] = Number(f.n);
+    return { por_estado: await por('estado'), por_categoria: await por('categoria'), por_municipio: porMunicipio.map((f) => ({ municipio: f.k, total: Number(f.n) })), por_hora: horas };
+  },
   enRevision: () => db.todos(`${SELECT} WHERE r.estado = 'EN_REVISION' ORDER BY r.denuncias DESC, r.creado_en`),
 };

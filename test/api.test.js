@@ -115,8 +115,8 @@ describe('moderación humana (human-in-the-loop)', () => {
     const mod = await s.ingresar('moderadora@demo.co');
     const cola = await s.pedir('GET', '/moderacion/cola', { token: mod });
     assert.ok(cola.cuerpo.reportes.some((x) => x.id === id));
-    assert.equal((await s.pedir('POST', `/moderacion/${id}/resolver`, { token: mod, cuerpo: { decision: 'RESTAURAR' } })).estado, 400); // exige justificación
-    const res = await s.pedir('POST', `/moderacion/${id}/resolver`, { token: mod, cuerpo: { decision: 'RESTAURAR', nota: 'Revisado: es un reporte legítimo' } });
+    assert.equal((await s.pedir('POST', `/moderacion/reportes/${id}/resolver`, { token: mod, cuerpo: { decision: 'RESTAURAR' } })).estado, 400); // exige justificación
+    const res = await s.pedir('POST', `/moderacion/reportes/${id}/resolver`, { token: mod, cuerpo: { decision: 'RESTAURAR', nota: 'Revisado: es un reporte legítimo' } });
     assert.equal(res.cuerpo.estado, 'ACTIVO');
     const aud = await s.pedir('GET', '/moderacion/auditoria', { token: mod });
     assert.ok(aud.cuerpo.eventos.some((e) => e.accion === 'REPORTE_RESTAURADO'));
