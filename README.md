@@ -62,6 +62,7 @@ tools/          Generadores de documentos y descarga de calles de OpenStreetMap
 | 3. Implementación | `src/`, `public/`, `shared/` |
 | 4. Pruebas | `test/` · `docs/PRUEBAS_USABILIDAD.md` |
 | 5. Despliegue y mantenimiento | `docs/DESPLIEGUE.md` · `Dockerfile` · `render.yaml` · CI |
+| Uso | `docs/Manual_de_Usuario_Nova.docx` (usuarias y moderadoras) · `docs/Guia_de_Estudio_Nova.docx` · `docs/Presentacion_Nova.pptx` |
 | Transversal | `docs/IA_Responsable_Nova.docx` (herramientas, prompts, evaluación crítica y supervisión humana) |
 
 Regenerar los documentos Word: `python -m tools.docs.gen_docs` (requiere `matplotlib` y `python-docx`).
