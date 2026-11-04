@@ -17,7 +17,7 @@ docker compose up --build   # app en http://localhost:3000
 
 ## Nube en capa gratuita (Render)
 1. Sube el repositorio a GitHub.
-2. En Render: **New → Blueprint** y elige el repositorio. `render.yaml` crea el servicio web (Docker) y la base PostgreSQL gratuita, y genera `JWT_SECRET` y `DATA_KEY`.
+2. En Render: **New → Blueprint** y elige el repositorio. `render.yaml` crea el servicio web (Docker) y genera `JWT_SECRET` y `DATA_KEY`. Render solo permite una base PostgreSQL gratuita por cuenta: Nova usa un schema propio (`DB_SCHEMA=nova`) dentro de la base que ya tengas; cuando Render pida `DATABASE_URL`, pega la *Internal Database URL* de esa base. Si no tienes ninguna, crea una gratuita (New → PostgreSQL) y usa esa.
 3. Edita `APP_USER_AGENT` con un correo de contacto (política de OpenStreetMap).
 4. `render.yaml` genera `DEMO_PASSWORD`: es la clave secreta de `sofia@demo.co` y `moderadora@demo.co`. La ves en *Environment* del servicio. La clave pública del README (`Luna2026!`) solo funciona en local.
 5. Para nombrar una moderadora real: la persona se registra y luego, en la *Shell* de Render, `npm run moderadora -- correo@dominio.com`. Cuando haya datos reales, pon `SEED_DEMO=0` y borra o cambia las cuentas iniciales.

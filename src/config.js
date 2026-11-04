@@ -16,6 +16,7 @@ export const config = {
   produccion,
   puerto: Number(env.PORT || 3000),
   databaseUrl: env.DATABASE_URL || '',
+  dbSchema: env.DB_SCHEMA || '', // schema propio dentro de una base PostgreSQL compartida
   sqlitePath: env.SQLITE_PATH || 'data/ruta_segura.db',
   jwtSecret: secreto('JWT_SECRET'),
   jwtExpira: env.JWT_EXPIRA || '2h',

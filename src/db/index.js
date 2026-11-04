@@ -12,6 +12,14 @@ async function abrir() {
     const local = /sslmode=disable|localhost|127\.0\.0\.1/.test(config.databaseUrl);
     const pool = new pg.Pool({ connectionString: config.databaseUrl, ssl: local ? false : { rejectUnauthorized: false }, max: 10 });
     const conv = (sql) => { let i = 0; return sql.replace(/\?/g, () => `$${++i}`); };
+    // Aísla las tablas de Nova en su propio schema cuando la base se comparte con otro proyecto
+    // (p. ej. la única base PostgreSQL gratuita que permite Render por cuenta).
+    const esquema = config.dbSchema;
+    if (esquema) {
+      if (!/^[a-z_][a-z0-9_]{0,40}$/.test(esquema)) throw new Error('DB_SCHEMA no es un identificador válido.');
+      pool.on('connect', (c) => c.query(`SET search_path TO ${esquema}`)); // antes de la primera consulta
+      await pool.query(`CREATE SCHEMA IF NOT EXISTS ${esquema}`);
+    }
     return {
       dialecto: 'postgres',
       async todos(sql, p = []) { return (await pool.query(conv(sql), p)).rows; },

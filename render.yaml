@@ -1,4 +1,6 @@
-# Despliegue en la nube con capa gratuita (Render): servicio web Node + base PostgreSQL.
+# Despliegue en la nube con capa gratuita (Render): servicio web Node.
+# Render solo permite UNA base PostgreSQL gratuita por cuenta; Nova usa un schema propio ("nova") dentro de la que ya existe,
+# así no toca las tablas de otros proyectos. Pega su "Internal Database URL" en DATABASE_URL cuando Render la pida.
 # Conecta el repositorio en https://dashboard.render.com → New → Blueprint.
 services:
   - type: web
@@ -15,16 +17,12 @@ services:
       - key: DATA_KEY
         generateValue: true
       - key: DATABASE_URL
-        fromDatabase: { name: nova-db, property: connectionString }
+        sync: false          # se pide al crear el servicio (Internal Database URL de tu base PostgreSQL)
+      - key: DB_SCHEMA
+        value: nova
       - key: DEMO_PASSWORD   # clave secreta de sofia@demo.co y moderadora@demo.co (la ves en Environment)
         generateValue: true
       - key: SEED_DEMO
         value: "1"          # pon "0" cuando haya datos reales
       - key: APP_USER_AGENT
         value: "NovaRutaSegura/1.0 (tu-correo@ejemplo.com)"
-
-databases:
-  - name: nova-db
-    plan: free
-    databaseName: nova
-    user: nova
