@@ -3,10 +3,20 @@ from pathlib import Path
 
 from docx.shared import Cm, Pt
 
-from .docx_util import h1, h2, imagen, nota, nuevo_documento, p, portada, tabla
+from .docx_util import h1, h2, nota, nuevo_documento, p, portada, tabla
+from .docx_util import imagen as _imagen
 
 RAIZ = Path(__file__).resolve().parents[2]
 CAP = RAIZ / "capturas-video"
+
+
+def imagen(d, ruta, ancho_cm, pie=None):
+    """Usa la versión optimizada (JPEG, 1200 px) si existe: la plataforma limita el tamaño de los archivos."""
+    ruta = Path(ruta)
+    opt = (CAP / "opt" / ruta.relative_to(CAP)).with_suffix(".jpg")
+    _imagen(d, opt if opt.exists() else ruta, ancho_cm, pie)
+
+
 INTEGRANTES = "Miguel Angel Cruz Londoño · Julian Alexander Gomez Galvis · Jose Manuel Yara Cruz"
 
 

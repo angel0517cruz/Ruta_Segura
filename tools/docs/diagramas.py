@@ -25,8 +25,12 @@ def lienzo(w, h, titulo=None):
 
 def guardar(fig, nombre):
     SALIDA.mkdir(parents=True, exist_ok=True)
-    fig.savefig(SALIDA / nombre, dpi=160, bbox_inches="tight", facecolor="white")
+    destino = SALIDA / nombre
+    fig.savefig(destino, dpi=135, bbox_inches="tight", facecolor="white")
     plt.close(fig)
+    # Paleta reducida: son dibujos de colores planos y así pesan una fracción (la plataforma limita el tamaño).
+    from PIL import Image
+    Image.open(destino).convert("RGB").quantize(colors=96, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(destino, optimize=True)
 
 
 def caja(ax, x, y, w, h, texto="", fc="white", ec=PRI, fs=8.5, bold=False, r=1.0, lw=1.3, color=TINTA, va="center"):

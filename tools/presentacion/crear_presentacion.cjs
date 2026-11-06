@@ -4,7 +4,12 @@ const path = require('node:path');
 const pptxgen = require('pptxgenjs');
 
 const RAIZ = path.resolve(__dirname, '..', '..');
-const cap = (f) => path.join(RAIZ, 'capturas-video', f);
+const fs = require('node:fs');
+// Usa la versión optimizada (JPEG, 1200 px) si existe: la plataforma limita el tamaño de los archivos.
+const cap = (f) => {
+  const opt = path.join(RAIZ, 'capturas-video', 'opt', f.replace(/\.png$/, '.jpg'));
+  return fs.existsSync(opt) ? opt : path.join(RAIZ, 'capturas-video', f);
+};
 const SALIDA = path.join(RAIZ, 'docs', 'Presentacion_Nova.pptx');
 
 // Paleta Nova: violeta noche + crema/beige (alertas en rosa)
